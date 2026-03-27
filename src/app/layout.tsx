@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar/Navbar";
 import "./globals.css";
 
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -8,7 +9,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-full flex flex-col">
+      <body className={`min-h-full flex flex-col`}>
         <Navbar /> {children}
       </body>
     </html>
