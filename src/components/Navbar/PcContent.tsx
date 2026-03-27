@@ -10,7 +10,7 @@ export default function PcContent() {
         return (
           <div
             key={index}
-            className={`${i.title !== "Sign up" ? ` hover:border-1 hover:rounded-lg ` : ``}`}
+            className={`${i.title !== "Sign up" ? ` hover:border hover:rounded-lg ` : ``}`}
           >
             <NavButton title={i.title} to={i.to} />
           </div>

@@ -25,8 +25,7 @@ export default function Home() {
         <div className="xl:hidden">
           <SampleCarousal />
         </div>
-
-        <div className="flex gap-5 pt-10">
+        <div className="flex gap-5 pt-7">
           <ButtonPair onClick_functionality="/generate" text="Get Started" />
           <ButtonPair onClick_functionality="/docs" text="view docs" />
         </div>

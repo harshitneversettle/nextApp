@@ -11,7 +11,7 @@ export const contentList: contentsStructure[] = [
   },
   {
     title: "get Started",
-    to: "/make-routes",
+    to: "/get-started",
   },
   {
     title: "Sign up",
