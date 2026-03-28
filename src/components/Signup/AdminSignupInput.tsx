@@ -21,7 +21,6 @@ export default function AdminSignupInput() {
       console.log(error);
     }
   }
-
   return (
     <div className="">
       <div className="text-white bg-gray-950 border border-amber-50 rounded-xl px-3 md:px-10 py-5 ">

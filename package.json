@@ -11,6 +11,7 @@
   "dependencies": {
     "@prisma/client": "^7.6.0",
     "axios": "^1.14.0",
+    "bcrypt": "^6.0.0",
     "js-crypto-random": "^1.0.5",
     "next": "16.2.1",
     "react": "19.2.4",
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/bcrypt": "^6.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
