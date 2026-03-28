@@ -1,5 +1,5 @@
-import { db } from "@/config/PrismaClient";
 import { generateHash } from "@/helpers/generateHash";
+import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
+    console.log(error);
     NextResponse.json(
       {
         message: "Internal server error",

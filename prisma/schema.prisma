@@ -11,6 +11,7 @@ datasource db {
   provider = "postgresql"
 }
 
+
 model Admin {
   id        Int      @id @default(autoincrement())
   name      String
