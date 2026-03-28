@@ -2,12 +2,14 @@
 import GeneratePassword from "@/helpers/PasswordGenerator";
 import axios from "axios";
 import { useRef, useState } from "react";
+import { ShowNotification } from "../Notification/ShowNotification";
 
 export default function AdminSignupInput() {
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const [showPass, setShowPass] = useState<boolean>(false);
+  const [status, setStatus] = useState<boolean>(false);
 
   async function handleSignUp() {
     try {
@@ -17,12 +19,18 @@ export default function AdminSignupInput() {
         password: passwordRef.current?.value,
       });
       console.log(res.data);
+      if (res.status === 201) setStatus(true);
     } catch (error) {
       console.log(error);
     }
   }
   return (
     <div className="">
+      <ShowNotification
+        type="error"
+        status={400}
+        message="successfully logged in"
+      />
       <div className="text-white bg-gray-950 border border-amber-50 rounded-xl px-3 md:px-10 py-5 ">
         <div className="flex flex-col gap-7 text-xl">
           <div className="">
