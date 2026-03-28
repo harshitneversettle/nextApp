@@ -14,7 +14,7 @@ export default function MacbookSampleCarousal() {
     return () => clearInterval(interval);
   }, []);
   return (
-    <div className="fixed top-100 right-149">
+    <div className="absolute top-100 right-149">
       <div className="pb-8 pt-4">See someof the testimonals generated :</div>
       <div className="flex items-center justify-center h-70 w-100 md:w-175 md:h-90 bg-black rounded-4xl border border-white/20 transition-all duration-150">
         <img src={Images[currIndex].src} alt={Images[currIndex].alt} />;
