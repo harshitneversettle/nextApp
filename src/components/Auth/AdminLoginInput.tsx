@@ -37,6 +37,7 @@ export default function AdminLoginInput() {
         message: res.data.message,
       });
       alert(res.data.message);
+      router.push("/get-started");
     } catch (error) {
       console.log(error);
       setNoti({
@@ -94,7 +95,10 @@ export default function AdminLoginInput() {
           </div>
 
           <button
-            onClick={handleLogin}
+            onClick={() => {
+              setLoading(true);
+              handleLogin();
+            }}
             className="bg-green-700 text-white tracking-widest font-mono text-lg rounded-lg px-2 py-1 mt-4 hover:bg-green-800/80 transition-all"
           >
             {loading ? "logging in.." : "Login"}

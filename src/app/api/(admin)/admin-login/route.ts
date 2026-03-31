@@ -69,15 +69,15 @@ export async function POST(req: NextRequest) {
 
     const cookieSetting = await cookies();
 
-    cookieSetting.set("accessToken", accessToken , {
-        httpOnly : true ,
-        secure : true ,
-        expires : 60 * 60 * 24 ,
+    cookieSetting.set("accessToken", accessToken, {
+      httpOnly: true,
+      secure: true,
+    
     });
 
     return NextResponse.json(
       {
-        message: "Login successful successfully",
+        message: "Logged in successfully",
         type: "success",
       },
       { status: 201 },
