@@ -1,5 +1,5 @@
 import { ShowNotification } from "@/components/Notification/ShowNotification";
-import AdminSignupInput from "@/components/Signup/AdminSignupInput";
+import AdminSignupInput from "@/components/Auth/AdminSignupInput";
 
 export default function AdminSignUp() {
   return (

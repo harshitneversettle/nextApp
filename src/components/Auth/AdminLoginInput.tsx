@@ -1,8 +1,9 @@
 "use client";
-import GeneratePassword from "@/helpers/PasswordGenerator";
+
 import axios from "axios";
 import { useRef, useState } from "react";
 import { ShowNotification } from "../Notification/ShowNotification";
+import { useRouter } from "next/navigation";
 
 export default function AdminSignupInput() {
   const nameRef = useRef<HTMLInputElement>(null);
@@ -10,13 +11,15 @@ export default function AdminSignupInput() {
   const passwordRef = useRef<HTMLInputElement>(null);
   const [showPass, setShowPass] = useState<boolean>(false);
   const [noti, setNoti] = useState<{
-    id : number ,
+    id: number;
     type: "success" | "error";
     status: number;
     message: string;
   }>();
 
-  async function handleSignUp() {
+  const router = useRouter();
+
+  async function handleLogin() {
     try {
       const res = await axios.post("/api/admin", {
         name: nameRef.current?.value,
@@ -26,7 +29,7 @@ export default function AdminSignupInput() {
       console.log(res.data);
 
       setNoti({
-        id : Date.now() ,
+        id: Date.now(),
         type: res.data.type,
         status: res.status,
         message: res.data.message,
@@ -45,7 +48,7 @@ export default function AdminSignupInput() {
     <div className="">
       {noti && (
         <ShowNotification
-        id={noti.id}
+          id={noti.id}
           status={noti.status}
           message={noti.message}
           type={noti.type}
@@ -53,20 +56,6 @@ export default function AdminSignupInput() {
       )}
       <div className="text-white bg-gray-950 border border-amber-50 rounded-xl px-3 md:px-10 py-5 ">
         <div className="flex flex-col gap-7 text-xl">
-          <div className="">
-            Name :
-            <input
-              type="text"
-              ref={nameRef}
-              required
-              maxLength={20}
-              minLength={4}
-              name=""
-              id="name"
-              placeholder="name"
-              className="bg-white ml-15 text-black px-2 py-1 rounded-lg"
-            />
-          </div>
           <div className="">
             Email :{" "}
             <input
@@ -96,32 +85,27 @@ export default function AdminSignupInput() {
                 className="bg-white ml-6 text-black px-2 py-1 rounded-lg"
               />
             </div>
-            <div className="text-end text-sm mt-1">
-              <button
-                onClick={() => {
-                  if (!passwordRef.current) return;
-                  const pass = GeneratePassword(8);
-                  passwordRef.current.value = pass;
-                  setShowPass(true);
-                }}
-              >
-                Generate
-              </button>
-            </div>
           </div>
 
           <button
-            onClick={handleSignUp}
+            onClick={handleLogin}
             className="bg-green-700 text-white tracking-widest font-mono text-lg rounded-lg px-2 py-1 mt-4 hover:bg-green-800/80 transition-all"
           >
-            Sign Up
+            Login
           </button>
         </div>
       </div>
       <div className="flex flex-col justify-center items-center  mt-3">
         <span className="text-white ">
-          Already have an account ?{" "}
-          <span className="text-blue-500">log in </span>
+          Don't have an account ?{" "}
+          <button
+            onClick={() => {
+              router.push("/admin-sign-up");
+            }}
+            className="text-blue-500"
+          >
+            Sign up{" "}
+          </button>
         </span>
       </div>
     </div>
