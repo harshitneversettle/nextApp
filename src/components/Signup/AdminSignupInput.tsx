@@ -9,7 +9,12 @@ export default function AdminSignupInput() {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const [showPass, setShowPass] = useState<boolean>(false);
-  const [status, setStatus] = useState<boolean>(false);
+  const [noti, setNoti] = useState<{
+    id : number ,
+    type: "success" | "error";
+    status: number;
+    message: string;
+  }>();
 
   async function handleSignUp() {
     try {
@@ -19,18 +24,33 @@ export default function AdminSignupInput() {
         password: passwordRef.current?.value,
       });
       console.log(res.data);
-      if (res.status === 201) setStatus(true);
+
+      setNoti({
+        id : Date.now() ,
+        type: res.data.type,
+        status: res.status,
+        message: res.data.message,
+      });
     } catch (error) {
       console.log(error);
+      setNoti({
+        id: Date.now(),
+        type: "error",
+        status: 500,
+        message: "Internal server error",
+      });
     }
   }
   return (
     <div className="">
-      <ShowNotification
-        type="error"
-        status={400}
-        message="successfully logged in"
-      />
+      {noti && (
+        <ShowNotification
+        id={noti.id}
+          status={noti.status}
+          message={noti.message}
+          type={noti.type}
+        />
+      )}
       <div className="text-white bg-gray-950 border border-amber-50 rounded-xl px-3 md:px-10 py-5 ">
         <div className="flex flex-col gap-7 text-xl">
           <div className="">
@@ -53,7 +73,7 @@ export default function AdminSignupInput() {
               type="email"
               ref={emailRef}
               minLength={13}
-              maxLength={20}
+              maxLength={60}
               required
               name=""
               id=""

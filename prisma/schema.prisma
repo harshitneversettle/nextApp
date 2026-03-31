@@ -25,9 +25,11 @@ model Admin {
 model Events {
   id        Int       @id @default(autoincrement())
   eventName String    @unique
-  reviews   Reviews[]
+  eventDesc String 
+  message String
   adminId   Int
-  admin     Admin     @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  reviews   Reviews[]
+  admin     Admin     @relation(fields: [adminId], references: [id], onDelete: Cascade) 
 }
 
 model Users {

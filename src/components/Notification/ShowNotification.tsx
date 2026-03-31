@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 
 interface Props {
+  id : number
   type: "success" | "error";
   message: string;
   status?: number;
 }
 
-export function ShowNotification({ type, message, status }: Props) {
+export function ShowNotification({ id ,type, message, status }: Props) {
   const [show, setShow] = useState<boolean>(true);
 
   useEffect(() => {
@@ -17,7 +18,7 @@ export function ShowNotification({ type, message, status }: Props) {
       setShow(false);
     }, 4000);
     return () => clearTimeout(timeout);
-  }, []);
+  }, [id]);
 
   return (
     <div className="absolute text-white z-100 top-[-40] right-18  md:right-205">
