@@ -10,6 +10,7 @@ export default function AdminSignupInput() {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const [showPass, setShowPass] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const [noti, setNoti] = useState<{
     id: number;
     type: "success" | "error";
@@ -20,6 +21,7 @@ export default function AdminSignupInput() {
   const router = useRouter();
 
   async function handleSignUp() {
+    if (!nameRef.current || !emailRef.current || !passwordRef.current) return;
     try {
       const res = await axios.post("/api/admin", {
         name: nameRef.current?.value,
@@ -43,6 +45,10 @@ export default function AdminSignupInput() {
         message: "Internal server error",
       });
     }
+    setLoading(false);
+    emailRef.current.value = "";
+    nameRef.current.value = "" ;
+    passwordRef.current.value = "";
   }
   return (
     <div className="">
@@ -114,10 +120,13 @@ export default function AdminSignupInput() {
           </div>
 
           <button
-            onClick={handleSignUp}
+            onClick={() => {
+              setLoading(true);
+              handleSignUp();
+            }}
             className="bg-green-700 text-white tracking-widest font-mono text-lg rounded-lg px-2 py-1 mt-4 hover:bg-green-800/80 transition-all"
           >
-            Sign Up
+            {loading ? "signing in.." : "Sign Up"}
           </button>
         </div>
       </div>

@@ -5,11 +5,12 @@ import { useRef, useState } from "react";
 import { ShowNotification } from "../Notification/ShowNotification";
 import { useRouter } from "next/navigation";
 
-export default function AdminSignupInput() {
-  const nameRef = useRef<HTMLInputElement>(null);
+export default function AdminLoginInput() {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const [showPass, setShowPass] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+
   const [noti, setNoti] = useState<{
     id: number;
     type: "success" | "error";
@@ -20,9 +21,10 @@ export default function AdminSignupInput() {
   const router = useRouter();
 
   async function handleLogin() {
+    if (!emailRef.current || !passwordRef.current) return;
+
     try {
-      const res = await axios.post("/api/admin", {
-        name: nameRef.current?.value,
+      const res = await axios.post("/api/admin-login", {
         email: emailRef.current?.value,
         password: passwordRef.current?.value,
       });
@@ -34,6 +36,7 @@ export default function AdminSignupInput() {
         status: res.status,
         message: res.data.message,
       });
+      alert(res.data.message);
     } catch (error) {
       console.log(error);
       setNoti({
@@ -43,6 +46,9 @@ export default function AdminSignupInput() {
         message: "Internal server error",
       });
     }
+    setLoading(false);
+    emailRef.current.value = "";
+    passwordRef.current.value = "";
   }
   return (
     <div className="">
@@ -91,7 +97,7 @@ export default function AdminSignupInput() {
             onClick={handleLogin}
             className="bg-green-700 text-white tracking-widest font-mono text-lg rounded-lg px-2 py-1 mt-4 hover:bg-green-800/80 transition-all"
           >
-            Login
+            {loading ? "logging in.." : "Login"}
           </button>
         </div>
       </div>
