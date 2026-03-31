@@ -14,6 +14,7 @@ model Admin {
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
+  refreshToken String?
   events    Events[]
   users     Users[]
 }

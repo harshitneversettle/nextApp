@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
         email: adminDetails.email,
       },
       process.env.ACCESS_SECRET!,
-      { expiresIn: "1d" },
+      { expiresIn: "30m" },
     );
 
     const refreshToken = jwt.sign(
@@ -64,6 +64,11 @@ export async function POST(req: NextRequest) {
       { expiresIn: "7d" },
     );
 
+    await db.admin.update({
+      where: { email: adminDetails.email },
+      data: { refreshToken },
+    });
+    
     const cookieSetting = await cookies();
 
     cookieSetting.set("accessToken", accessToken, {

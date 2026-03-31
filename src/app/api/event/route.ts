@@ -6,6 +6,7 @@ export async function POST(req: NextRequest) {
   try {
     const { eventName, eventDescription, message } = await req.json();
     const cookie = await cookies();
+    
 
     if (!eventName || !eventDescription || !message) {
       return NextResponse.json(

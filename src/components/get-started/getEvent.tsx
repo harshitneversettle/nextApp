@@ -1,20 +1,34 @@
 "use client";
 
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
 export function GetEvent() {
   const eventNameRef = useRef<HTMLInputElement | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [getData, setGetData] = useState();
+  const router = useRouter();
 
   async function handleGet() {
     try {
       if (!eventNameRef.current) return;
       const eventName = eventNameRef.current.value;
-      const response = await axios.get(`/api/event/${eventName}`);
+      let response = await axios.get(`/api/event/${eventName}`);
 
       console.log(response.data);
+
+      if (response.data.message === "Access token expired") {
+        const response2 = await axios.post("/api/refresh");
+        console.log(response2.data);
+        if (response2.data.message == "login again") {
+          setLoading(false);
+          router.push("admin/login");
+        } else {
+          const newAccess = response2.data.data;
+          response = await axios.get(`/api/event/${eventName}`);
+        }
+      }
 
       if (response.data.type === "success") {
         alert("event fetched");
