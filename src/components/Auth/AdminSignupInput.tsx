@@ -23,7 +23,9 @@ export default function AdminSignupInput() {
   async function handleSignUp() {
     if (!nameRef.current || !emailRef.current || !passwordRef.current) return;
     try {
-      const res = await axios.post("/api/admin", {
+      console.log("jii");
+      console.log(process.env.DATABASE_URL);
+      const res = await axios.post("/api/admin-signup", {
         name: nameRef.current?.value,
         email: emailRef.current?.value,
         password: passwordRef.current?.value,
@@ -46,9 +48,9 @@ export default function AdminSignupInput() {
       });
     }
     setLoading(false);
-    emailRef.current.value = "";
-    nameRef.current.value = "" ;
-    passwordRef.current.value = "";
+    // emailRef.current.value = "";
+    // nameRef.current.value = "" ;
+    // passwordRef.current.value = "";
   }
   return (
     <div className="">

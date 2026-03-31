@@ -1,4 +1,3 @@
-import { generateHash } from "@/helpers/generateHash";
 import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
@@ -8,7 +7,8 @@ import { cookies } from "next/headers";
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
-
+    console.log(email);
+    console.log(password);
     if (!email || !password) {
       return NextResponse.json(
         {
@@ -25,6 +25,8 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    console.log(adminDetails);
+
     if (!adminDetails) {
       return NextResponse.json(
         {
@@ -34,7 +36,6 @@ export async function POST(req: NextRequest) {
         { status: 403 },
       );
     }
-
     const passCheck = await bcrypt.compare(password, adminDetails.password);
 
     if (!passCheck) {
@@ -46,7 +47,6 @@ export async function POST(req: NextRequest) {
         { status: 403 },
       );
     }
-
     const accessToken = jwt.sign(
       {
         id: adminDetails.id,
@@ -56,7 +56,6 @@ export async function POST(req: NextRequest) {
       { expiresIn: "1d" },
     );
 
-    // REVIEW:
     const refreshToken = jwt.sign(
       {
         id: adminDetails.id,
@@ -65,14 +64,19 @@ export async function POST(req: NextRequest) {
       { expiresIn: "7d" },
     );
 
-    //
-
     const cookieSetting = await cookies();
 
     cookieSetting.set("accessToken", accessToken, {
       httpOnly: true,
       secure: true,
-    
+      maxAge: 60 * 30,
+      sameSite: "strict",
+    });
+    cookieSetting.set("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 60 * 60 * 24 * 7,
+      sameSite: "strict",
     });
 
     return NextResponse.json(

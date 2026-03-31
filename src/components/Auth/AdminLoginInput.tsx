@@ -48,8 +48,8 @@ export default function AdminLoginInput() {
       });
     }
     setLoading(false);
-    emailRef.current.value = "";
-    passwordRef.current.value = "";
+    // emailRef.current.value = "";
+    // passwordRef.current.value = "";
   }
   return (
     <div className="">
