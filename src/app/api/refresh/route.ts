@@ -26,6 +26,22 @@ export async function POST(req: NextRequest) {
       await db.admin.findUnique({ where: { id: adminId.id } })
     )?.email;
 
+    const dbRefresh = (
+      await db.admin.findUnique({
+        where: { email: adminEmail },
+      })
+    )?.refreshToken;
+
+    if (dbRefresh !== refreshToken) {
+      return NextResponse.json(
+        {
+          message: "unauthorized",
+          type: "error",
+        },
+        { status: 401 },
+      );
+    }
+    
     const newAccess = jwt.sign(
       {
         id: adminId.id,

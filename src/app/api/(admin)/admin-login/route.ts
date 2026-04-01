@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
       where: { email: adminDetails.email },
       data: { refreshToken },
     });
-    
+
     const cookieSetting = await cookies();
 
     cookieSetting.set("accessToken", accessToken, {

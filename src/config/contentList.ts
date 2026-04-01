@@ -17,4 +17,8 @@ export const contentList: contentsStructure[] = [
     title: "Sign up",
     to: "/admin-sign-up",
   },
+  {
+    title: "Logout",
+    to: "/admin-logout",
+  },
 ];

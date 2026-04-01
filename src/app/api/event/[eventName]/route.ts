@@ -28,6 +28,32 @@ export async function GET(
         fetchedAccess,
         process.env.ACCESS_SECRET!,
       ) as { id: number; email: string };
+
+      const adminId = matchAccess.id;
+      const { eventName } = await params;
+
+      const eventDetails = await db.events.findMany({
+        where: { adminId: adminId, eventName },
+      });
+
+      if (!eventDetails) {
+        return NextResponse.json(
+          {
+            message: "No details found",
+            tip: "Did you created an event ?",
+          },
+          { status: 404 },
+        );
+      }
+      console.log(eventDetails);
+      return NextResponse.json(
+        {
+          message: "event successfully fetched",
+          type: "success",
+          data: eventDetails,
+        },
+        { status: 201 },
+      );
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
         // means token is expired , refresh the token
@@ -37,31 +63,6 @@ export async function GET(
         );
       }
     }
-
-    const { eventName } = await params;
-
-    const eventDetails = await db.events.findUnique({
-      where: { eventName: eventName },
-    });
-
-    if (!eventDetails) {
-      return NextResponse.json(
-        {
-          message: "No details found",
-          tip: "Did you created an event ?",
-        },
-        { status: 404 },
-      );
-    }
-    console.log(eventDetails);
-    return NextResponse.json(
-      {
-        message: "event successfully fetched",
-        type: "success",
-        data: eventDetails,
-      },
-      { status: 201 },
-    );
   } catch (error) {
     return NextResponse.json(
       {

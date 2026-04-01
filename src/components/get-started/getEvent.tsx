@@ -21,7 +21,10 @@ export function GetEvent() {
       if (response.data.message === "Access token expired") {
         const response2 = await axios.post("/api/refresh");
         console.log(response2.data);
-        if (response2.data.message == "login again") {
+        if (
+          response2.data.status === "login again" ||
+          response2.data.message === "unauthorized"
+        ) {
           setLoading(false);
           router.push("admin/login");
         } else {
@@ -88,9 +91,12 @@ export function GetEvent() {
           >
             {loading ? "fetching..." : "get event"}
           </button>
-          <div className=" pt-5 text-md text-green-400 overflow-hidden pl-5">
+          <div
+            className={`pt-5 text-md text-green-400 overflow-hidden pl-5 ${getData ? "" : "text-center !text-white"}`}
+          >
             <pre className="break-words whitespace-pre-wrap ">
-              {JSON.stringify(getData, null, 2)}
+              {JSON.stringify(getData, null, 2) ||
+                "No events yet, create an event to see the details here !"}
             </pre>
           </div>
         </div>
