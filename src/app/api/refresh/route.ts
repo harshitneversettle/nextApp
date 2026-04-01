@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { db } from "@/lib/db";
 import { cookies } from "next/headers";
+import axios from "axios";
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,20 +20,55 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const adminId = jwt.verify(refreshToken, process.env.REFRESH_SECRET!) as {
-      id: number;
-    };
-    const adminEmail = (
-      await db.admin.findUnique({ where: { id: adminId.id } })
-    )?.email;
+    try {
+      const adminId = jwt.verify(refreshToken, process.env.REFRESH_SECRET!) as {
+        id: number;
+      };
 
-    const dbRefresh = (
-      await db.admin.findUnique({
-        where: { email: adminEmail },
-      })
-    )?.refreshToken;
+      const adminEmail = (
+        await db.admin.findUnique({ where: { id: adminId.id } })
+      )?.email;
 
-    if (dbRefresh !== refreshToken) {
+      const dbRefresh = (
+        await db.admin.findUnique({
+          where: { email: adminEmail },
+        })
+      )?.refreshToken;
+
+      if (dbRefresh !== refreshToken) {
+        return NextResponse.json(
+          {
+            message: "unauthorized",
+            type: "error",
+          },
+          { status: 401 },
+        );
+      }
+
+      const newAccess = jwt.sign(
+        {
+          id: adminId.id,
+          email: adminEmail,
+        },
+        process.env.ACCESS_SECRET!,
+        { expiresIn: "30m" },
+      );
+
+      cookie.delete("accessToken");
+
+      cookie.set("accessToken", newAccess, {
+        httpOnly: true,
+        secure: true,
+        maxAge: 60 * 30,
+        sameSite: "strict",
+      });
+
+      return NextResponse.json({
+        message: "done",
+        type: "success",
+        data: newAccess,
+      });
+    } catch (error) {
       return NextResponse.json(
         {
           message: "unauthorized",
@@ -41,30 +77,6 @@ export async function POST(req: NextRequest) {
         { status: 401 },
       );
     }
-    
-    const newAccess = jwt.sign(
-      {
-        id: adminId.id,
-        email: adminEmail,
-      },
-      process.env.ACCESS_SECRET!,
-      { expiresIn: "30m" },
-    );
-
-    cookie.delete("accessToken");
-
-    cookie.set("accessToken", newAccess, {
-      httpOnly: true,
-      secure: true,
-      maxAge: 60 * 30,
-      sameSite: "strict",
-    });
-
-    return NextResponse.json({
-      message: "done",
-      type: "success",
-      data: newAccess,
-    });
   } catch (error) {
     return NextResponse.json(
       {
