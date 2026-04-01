@@ -2,8 +2,7 @@ import { db } from "@/lib/db";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { refreshAccess } from "@/lib/refresh";
-import { refreshtoken } from "../refresh/route";
+import { refreshtoken } from "@/helpers/refreshToken";
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,12 +11,37 @@ export async function POST(req: NextRequest) {
     let accessToken;
     try {
       accessToken = cookie.get("accessToken")?.value;
-      const decoded = jwt.verify(accessToken!, process.env.ACCESS_SECRET!) as {
-        id: number;
-        email: string;
-      };
+      let decoded;
+      try {
+        decoded = jwt.verify(accessToken!, process.env.ACCESS_SECRET!) as {
+          id: number;
+          email: string;
+        };
+      } catch (error) {
+        if (
+          error instanceof jwt.JsonWebTokenError ||
+          error instanceof jwt.TokenExpiredError
+        ) {
+          refreshtoken();
+          accessToken = cookie.get("accessToken")?.value;
+          try {
+            decoded = jwt.verify(accessToken!, process.env.ACCESS_SECRET!) as {
+              id: number;
+              email: string;
+            };
+          } catch (error) {
+            return NextResponse.json(
+              {
+                message: "unauthorized",
+                type: "error",
+              },
+              { status: 401 },
+            );
+          }
+        }
+      }
 
-      let adminEmail = decoded.email;
+      let adminEmail = decoded!.email;
 
       if (!eventName || !eventDescription || !message) {
         return NextResponse.json(
@@ -37,7 +61,7 @@ export async function POST(req: NextRequest) {
             message: "A event already associated with this Event name",
             type: "error",
           },
-          { status: 403 },
+          { status: 409 },
         );
       }
       await db.events.create({
@@ -56,12 +80,7 @@ export async function POST(req: NextRequest) {
         },
         { status: 201 },
       );
-    } catch (error) {
-      if (error instanceof (jwt.JsonWebTokenError || jwt.TokenExpiredError)) {
-        refreshtoken();
-        accessToken = cookie.get("accessToken")?.value;
-      }
-    }
+    } catch (error) {}
   } catch (error) {
     console.log(error);
     return NextResponse.json(

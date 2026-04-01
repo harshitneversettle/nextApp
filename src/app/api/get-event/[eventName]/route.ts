@@ -10,7 +10,6 @@ export async function GET(
 ) {
   try {
     const cookie = await cookies();
-    console.log(cookie);
     const fetchedAccess = cookie.get("accessToken")?.value;
 
     if (!fetchedAccess) {
@@ -29,12 +28,24 @@ export async function GET(
         process.env.ACCESS_SECRET!,
       ) as { id: number; email: string };
 
+      console.log(matchAccess);
       const adminId = matchAccess.id;
       const { eventName } = await params;
-
-      const eventDetails = await db.events.findMany({
-        where: { adminId: adminId, eventName },
+      // console.log(eventName);
+      if (!eventName) {
+        return NextResponse.json(
+          {
+            message: " try again",
+            type: "error",
+          },
+          { status: 400 },
+        );
+      }
+      const eventDetails = await db.events.findUnique({
+        where: { adminId: adminId, eventName: eventName },
       });
+
+      console.log(eventDetails);
 
       if (!eventDetails) {
         return NextResponse.json(
@@ -45,7 +56,7 @@ export async function GET(
           { status: 404 },
         );
       }
-      console.log(eventDetails);
+      // console.log(eventDetails);
       return NextResponse.json(
         {
           message: "event successfully fetched",

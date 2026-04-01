@@ -1,5 +1,3 @@
-import { NextRequest, NextResponse } from "next/server";
-
 import { cookies } from "next/headers";
 import { refreshAccess } from "@/lib/refresh";
 
@@ -24,7 +22,6 @@ export async function refreshtoken() {
       maxAge: 60 * 30,
       sameSite: "strict",
     });
-    
   } catch (error) {
     return null;
   }

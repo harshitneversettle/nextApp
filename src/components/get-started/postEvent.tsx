@@ -1,6 +1,7 @@
 "use client";
 
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
 export default function PostEvent() {
@@ -8,6 +9,7 @@ export default function PostEvent() {
   const eventDescriptionRef = useRef<HTMLTextAreaElement | null>(null);
   const messageRef = useRef<HTMLTextAreaElement | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
 
   async function handleCreate() {
     try {
@@ -17,31 +19,36 @@ export default function PostEvent() {
         !messageRef.current
       )
         return;
-      console.log(
-        eventNameRef.current.value,
-        eventDescriptionRef.current.value,
-        messageRef.current.value,
-      );
-      const response = await axios.post("/api/event", {
+
+      const response = await axios.post("/api/regieter-event", {
         eventName: eventNameRef.current.value,
         eventDescription: eventDescriptionRef.current.value,
         message: messageRef.current.value,
       });
-
-      console.log(response.data);
 
       if (response.data.type === "success") {
         alert("event created");
       } else {
         alert(response.data.message);
       }
-      setLoading(false);
+
       ((eventDescriptionRef.current.value = ""),
         (eventNameRef.current.value = ""),
         (messageRef.current.value = ""));
-    } catch (error) {
-      console.error("Error creating event:", error);
+    } catch (error: any) {
+      if (error.response.status === 401) {
+        alert("Unauthorized. Please log in as admin.");
+        router.push("/admin-login");
+        return;
+      } else if (error.response.status === 409) {
+        alert("change the event name");
+        return;
+      } else if (error.response.status === 400) {
+        alert("All fields are required");
+        return;
+      }
       alert("Failed to create event");
+    } finally {
       setLoading(false);
     }
   }
