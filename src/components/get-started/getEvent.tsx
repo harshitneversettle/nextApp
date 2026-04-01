@@ -32,6 +32,10 @@ export function GetEvent() {
           response = await axios.get(`/api/event/${eventName}`);
         }
       }
+      if (response.data.message === "unauthorized") {
+        setLoading(false);
+        router.push("admin/login");
+      }
 
       if (response.data.type === "success") {
         alert("event fetched");

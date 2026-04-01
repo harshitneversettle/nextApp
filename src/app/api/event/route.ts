@@ -1,55 +1,67 @@
 import { db } from "@/lib/db";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
+import { refreshAccess } from "@/lib/refresh";
+import { refreshtoken } from "../refresh/route";
 
 export async function POST(req: NextRequest) {
   try {
     const { eventName, eventDescription, message } = await req.json();
     const cookie = await cookies();
-    const accessToken = cookie.get("accessToken")?.value;
-    const refreshToken = cookie.get("refreshToken")?.value;
+    let accessToken;
+    try {
+      accessToken = cookie.get("accessToken")?.value;
+      const decoded = jwt.verify(accessToken!, process.env.ACCESS_SECRET!) as {
+        id: number;
+        email: string;
+      };
 
-    if (!eventName || !eventDescription || !message) {
+      let adminEmail = decoded.email;
+
+      if (!eventName || !eventDescription || !message) {
+        return NextResponse.json(
+          {
+            message: "All fields are required",
+            type: "error",
+          },
+          { status: 400 },
+        );
+      }
+
+      const isExist = await db.events.findFirst({ where: { eventName } });
+
+      if (isExist) {
+        return NextResponse.json(
+          {
+            message: "A event already associated with this Event name",
+            type: "error",
+          },
+          { status: 403 },
+        );
+      }
+      await db.events.create({
+        data: {
+          eventName,
+          eventDesc: eventDescription,
+          message,
+          admin: { connect: { email: adminEmail } },
+        },
+      });
+
       return NextResponse.json(
         {
-          message: "All fields are required",
-          type: "error",
+          message: "Event registered successfully",
+          type: "success",
         },
-        { status: 400 },
+        { status: 201 },
       );
+    } catch (error) {
+      if (error instanceof (jwt.JsonWebTokenError || jwt.TokenExpiredError)) {
+        refreshtoken();
+        accessToken = cookie.get("accessToken")?.value;
+      }
     }
-
-    const isExist = await db.events.findFirst({ where: { eventName } });
-
-    if (isExist) {
-      return NextResponse.json(
-        {
-          message: "A event already associated with this Event name",
-          type: "error",
-        },
-        { status: 403 },
-      );
-    }
-
-    // const adminEmail = cookie.get("email")?.value;
-    const adminEmail = "harshityadav5499@gmail.com";
-
-    await db.events.create({
-      data: {
-        eventName,
-        eventDesc: eventDescription,
-        message,
-        admin: { connect: { email: adminEmail } },
-      },
-    });
-
-    return NextResponse.json(
-      {
-        message: "Event registered successfully",
-        type: "success",
-      },
-      { status: 201 },
-    );
   } catch (error) {
     console.log(error);
     return NextResponse.json(

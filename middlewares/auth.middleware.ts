@@ -1,44 +1,77 @@
-import axios from "axios";
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
+import { db } from "@/lib/db";
+import { refreshAccess } from "@/lib/refresh";
+import { NextRequest } from "next/server";
 
-export async function auth(Req: NextResponse) {
+async function verify(adminEmail: string) {
+  const adminDetails = await db.admin.findUnique({
+    where: { email: adminEmail },
+  });
+
+  if (!adminDetails) {
+    return null;
+  }
+
+  return adminDetails;
+}
+
+export async function auth(req: NextRequest) {
   const cookie = await cookies();
   let accessToken;
+  let decoded;
   try {
-    let accessToken = cookie.get("accessToken")?.value;
+    accessToken = cookie.get("accessToken")?.value;
+
+    if (!accessToken) {
+      return false;
+    }
+
+    decoded = jwt.verify(accessToken, process.env.ACCESS_SECRET!) as {
+      id: number;
+      email: string;
+    };
+
+    const adminEmail = decoded.email;
+    const result = await verify(adminEmail);
+    if (!result) {
+      return false;
+    }
+    return true;
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      const refreshToken = cookie.get("accessToken")?.value;
-      if (!refreshToken) {
-        return NextResponse.json(
-          {
-            message: "Login again",
-            type: "error",
-          },
-          { status: 401 },
-        );
-      }
-      const response = await axios.post("/api/refresh");
-      if (response.data.message == "done") {
-        accessToken = response.data.newAccess;
+      try {
+        const refreshToken = cookie.get("refreshToken")?.value;
+        if (!refreshToken) {
+          return false;
+        }
+        const newAccess = await refreshAccess(refreshToken);
+        if (newAccess === null) {
+          return false;
+        }
+        accessToken = newAccess;
+        decoded = jwt.verify(accessToken, process.env.ACCESS_SECRET!) as {
+          id: number;
+          email: string;
+        };
+        const adminEmail = decoded.email;
+        const result = await verify(adminEmail);
+        if (!result) {
+          return false;
+        }
+        cookie.set("accessToken", newAccess, {
+          httpOnly: true,
+          secure: true,
+          maxAge: 60 * 30,
+          sameSite: "strict",
+        });
+        return true;
+      } catch (error) {
+        return false;
       }
     } else {
       // unauthorized hai
-
-      return NextResponse.json(
-        {
-          message: "unauthorized",
-          type: "error",
-        },
-        { status: 401 },
-      );
+      return false;
     }
   }
-
-  // yaha tk i have the access token , for sure
-  const decoded = jwt.verify(accessToken, process.env.ACCESS_SECRET!);
-  
-  return null ;
 }
