@@ -2,8 +2,6 @@
 
 import { GetEvent } from "@/components/get-started/getEvent";
 import PostEvent from "@/components/get-started/postEvent";
-import { generateLink } from "@/helpers/generateLink";
-import { EventData } from "@/types/eventData";
 import { useEffect, useState } from "react";
 
 export default function GetStarted() {

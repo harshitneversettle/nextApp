@@ -1,5 +1,3 @@
-import "./globals.css";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -7,7 +5,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`flex flex-col `}>{children}</body>
+      <body className={`h-auto flex flex-col h-auto`}>{children}</body>
     </html>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { generateLink } from "@/helpers/generateLink";
-import { EventData } from "@/types/eventData";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
