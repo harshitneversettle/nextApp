@@ -1,16 +1,23 @@
 import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
-
 export async function POST(req: NextRequest) {
+  console.log("Hello");
   try {
+    // const { adminId, eventName } = await req.json();
     const { adminId, eventName } = await req.json();
-    const adminDetails = await db.admin.findUnique({ where: { id: adminId } });
+    const adminIdNum = Number(adminId);
+    // console.log(typeof adminId, eventName);
+    const adminDetails = await db.admin.findUnique({
+      where: { id: adminIdNum },
+    });
+    // console.log("accha", adminDetails);
+
     const adminEmail = adminDetails?.email;
     const adminName = adminDetails?.name;
 
     const eventDetails = await db.events.findFirst({
-      where: { adminId, eventName },
+      where: { adminId: adminIdNum, eventName },
     });
     const eventDesc = eventDetails?.eventDesc;
     const eventMessage = eventDetails?.message;
@@ -21,7 +28,7 @@ export async function POST(req: NextRequest) {
       eventDesc,
       eventMessage,
     };
-    console.log("kmasncjasbncj" ,toSend)
+    // console.log(toSend);
     return NextResponse.json(
       {
         message: "successfully fetched",
@@ -35,7 +42,7 @@ export async function POST(req: NextRequest) {
       {
         message: "error",
         type: "error",
-        data : {}
+        data: {},
       },
       { status: 404 },
     );

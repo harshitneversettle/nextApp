@@ -5,13 +5,13 @@ import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 
 export default function SampleCarousal() {
   const [currIndex, setCurrIndex] = useState(0);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrIndex((prev) => (prev + 1) % Images.length);
-    }, 2000);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setCurrIndex((prev) => (prev + 1) % Images.length);
+  //   }, 2000);
 
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(interval);
+  // }, []);
   return (
     <div className="">
       <div className="flex items-center justify-center h-70 w-100 md:w-175 md:h-90 bg-black rounded-4xl border border-white/20 transition-all duration-150">

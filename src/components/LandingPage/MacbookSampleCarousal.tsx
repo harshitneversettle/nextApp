@@ -6,6 +6,7 @@ import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 
 export default function MacbookSampleCarousal() {
   const [currIndex, setCurrIndex] = useState(0);
+  
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrIndex((prev) => (prev + 1) % Images.length);
