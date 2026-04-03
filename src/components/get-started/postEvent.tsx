@@ -20,7 +20,7 @@ export default function PostEvent() {
       )
         return;
 
-      const response = await axios.post("/api/regieter-event", {
+      const response = await axios.post("/api/register-event", {
         eventName: eventNameRef.current.value,
         eventDescription: eventDescriptionRef.current.value,
         message: messageRef.current.value,
