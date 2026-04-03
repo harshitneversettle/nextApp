@@ -43,7 +43,7 @@ export default function FIllform({ adminId, eventName }: props) {
 
   return (
     <div className=" h-screen text-white flex flex-col items-center ">
-      <div className="absolute z-100 pl-5 pt-10 flex mt-5 flex-col gap-6 w-90 h-180 md:w-140 md:h-180 bg-gray-950 rounded-3xl border border-white ">
+      <div className="absolute z-100 pl-5 pt-10 flex mt-5 flex-col gap-6 w-90 h-145 md:w-140 md:h-187 bg-gray-950 rounded-3xl border border-white ">
         <div className=" text-sm md:text-lg ">
           {/* name + email */}
           <div className="flex md:flex-col md:gap-3 mr-2 md:mb-5">
@@ -130,7 +130,7 @@ export default function FIllform({ adminId, eventName }: props) {
             className="bg-gray-400 text-black rounded-md px-2 md:max-w-125 border border-white "
           />
         </div>
-        <div className="">
+        <div className="flex flex-col pt-5 text-md md:text-lg mr-3 md:mr-9">
           <span className="tracking-widest text-white/50 ">stars :</span>
           <input
             min={0}
@@ -138,21 +138,21 @@ export default function FIllform({ adminId, eventName }: props) {
             max={5}
             step={0.1}
             type="range"
-            className="text-center accent-white px-2 rounded-md border border-white "
+            className="text-center mt-1 md:mt-3 accent-white md:px-2 rounded-md border  border-white "
           />
         </div>
+        <div className="flex justify-center">
+          <button className="bg-white text-black px-2 py-1 rounded-lg hover:bg-white/60 transition-all duration-100">
+            submit
+          </button>
+        </div>
       </div>
-      {/* <img
-          src=" /okok.png"
-          alt=""
-          className="relative w-500 h-400 top-135 md:top-173"
-        /> */}
       <Image
         alt=""
         src={"/hmm.png"}
         width={500}
         height={400}
-        className="relative top-135 md:top-173"
+        className="relative top-140 md:top-180 "
       />
     </div>
   );
