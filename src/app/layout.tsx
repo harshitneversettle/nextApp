@@ -1,4 +1,5 @@
 import "./globals.css";
+import Providers from "./providers";
 
 export default function RootLayout({
   children,
@@ -6,8 +7,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`flex flex-col `}>{children}</body>
+    <html>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

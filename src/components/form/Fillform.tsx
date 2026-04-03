@@ -3,6 +3,9 @@
 import Image from "next/image";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSession, signIn, signOut } from "next-auth/react";
 
 interface props {
   adminId: number;
@@ -19,7 +22,15 @@ export default function FIllform({ adminId, eventName }: props) {
   const userNameref = useRef<HTMLInputElement | null>(null);
   const userEmailref = useRef<HTMLInputElement | null>(null);
   const reviewRef = useRef<HTMLTextAreaElement | null>(null);
-  const starRef = useRef<HTMLInputElement | null>(null);
+  const [stars, setStars] = useState(0);
+  const userData = useSession();
+  const logged = userData.status === "authenticated";
+
+  useEffect(() => {
+    if (userData?.data?.user?.name && userNameref.current) {
+      userNameref.current.value = userData.data.user.name;
+    }
+  }, [userData]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -41,9 +52,9 @@ export default function FIllform({ adminId, eventName }: props) {
       </div>
     );
 
-  return (
-    <div className=" h-screen text-white flex flex-col items-center ">
-      <div className="absolute z-100 pl-5 pt-10 flex mt-5 flex-col gap-6 w-90 h-145 md:w-140 md:h-187 bg-gray-950 rounded-3xl border border-white ">
+  return logged ? (
+    <div className=" md:min-h-335 text-white flex flex-col items-center ">
+      <div className="absolute z-100 pl-5 pt-10 flex mt-5 flex-col gap-6 w-90 h-147 md:w-140 md:h-187 bg-gray-950 rounded-3xl border border-white ">
         <div className=" text-sm md:text-lg ">
           {/* name + email */}
           <div className="flex md:flex-col md:gap-3 mr-2 md:mb-5">
@@ -104,8 +115,9 @@ export default function FIllform({ adminId, eventName }: props) {
               <input
                 type="text"
                 ref={userNameref}
+                // value={userData.data.user?.name || ""}
                 placeholder="name "
-                className="bg-gray-400 text-black max-w-52 mx-2 md:min-w-70 rounded-md px-2 md:mx-4 border border-white "
+                className="bg-gray-400 text-sm text-black min-w-52 mx-2 md:min-w-70 rounded-md px-2 md:mx-4 border border-white "
               />
             </div>
             <div className="">
@@ -115,8 +127,9 @@ export default function FIllform({ adminId, eventName }: props) {
               <input
                 type="text"
                 ref={userEmailref}
+                value={userData.data.user?.email || ""}
                 placeholder="email"
-                className="bg-gray-400 text-black rounded-md max-w-52 px-2 md:min-w-70 mx-2 md:mx-4 border border-white "
+                className="bg-gray-400 text-sm text-black rounded-md min-w-52 px-2 md:min-w-70 mx-2 md:mx-4 border border-white "
               />
             </div>
           </div>
@@ -131,10 +144,12 @@ export default function FIllform({ adminId, eventName }: props) {
           />
         </div>
         <div className="flex flex-col pt-5 text-md md:text-lg mr-3 md:mr-9">
-          <span className="tracking-widest text-white/50 ">stars :</span>
+          <span className="tracking-widest text-white/50 ">
+            stars : <span className="text-yellow-500 font-mono"> {stars}</span>
+          </span>
           <input
             min={0}
-            ref={starRef}
+            onChange={(e) => setStars(Number(e.target.value))}
             max={5}
             step={0.1}
             type="range"
@@ -145,6 +160,12 @@ export default function FIllform({ adminId, eventName }: props) {
           <button className="bg-white text-black px-2 py-1 rounded-lg hover:bg-white/60 transition-all duration-100">
             submit
           </button>
+          <button
+            onClick={() => signOut()}
+            className="bg-white text-black px-2 py-1 rounded-lg hover:bg-white/60 transition-all duration-100"
+          >
+            logout
+          </button>
         </div>
       </div>
       <Image
@@ -152,8 +173,15 @@ export default function FIllform({ adminId, eventName }: props) {
         src={"/hmm.png"}
         width={500}
         height={400}
-        className="relative top-140 md:top-180 "
+        className="relative top-141 md:top-179 "
       />
+    </div>
+  ) : (
+    <div className=" h-screen text-white flex justify-center items-center">
+      Please login to submit your review
+      <button className="bg-white text-black" onClick={() => signIn()}>
+        Signup
+      </button>
     </div>
   );
 }

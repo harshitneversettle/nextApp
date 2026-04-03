@@ -41,8 +41,8 @@ model Users {
 model Reviews {
   id          Int     @id @default(autoincrement())
   userEmail   String
-  title       String
-  description String
+  userName       String
+  review String
   stars       Int
   userId      Int
   user        Users   @relation(fields: [userId], references: [id], onDelete: Cascade)
