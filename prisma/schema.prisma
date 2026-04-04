@@ -9,43 +9,39 @@ datasource db {
 
 
 model Admin {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  password     String
+  createdAt    DateTime @default(now())
   refreshToken String?
-  events    Events[]
-  users     Users[]
+  events       Events[]
 }
 
 model Events {
   id        Int       @id @default(autoincrement())
   eventName String    @unique
   eventDesc String 
-  message String
+  message   String
   adminId   Int
-  reviews   Reviews[]
   admin     Admin     @relation(fields: [adminId], references: [id], onDelete: Cascade) 
+  users     Users[]
 }
 
 model Users {
-  id      Int       @id @default(autoincrement())
-  name    String
-  email   String    @unique
-  adminId Int
-  admin   Admin     @relation(fields: [adminId], references: [id])
-  reviews Reviews[]
+  id       Int       @id @default(autoincrement())
+  name     String
+  email    String    @unique
+  eventId  Int
+  events   Events     @relation(fields: [eventId], references: [id])
+  reviews  Reviews[]
 }
 
 model Reviews {
   id          Int     @id @default(autoincrement())
-  userEmail   String
-  userName       String
-  review String
+  eventName   String
+  review      String
   stars       Int
-  userId      Int
+  userId      Int   @unique
   user        Users   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  events      Events? @relation(fields: [eventsId], references: [id])
-  eventsId    Int?
 }

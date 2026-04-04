@@ -52,6 +52,25 @@ export default function FIllform({ adminId, eventName }: props) {
       </div>
     );
 
+  async function handleSubmit() {
+    const data = {
+      userName: userNameref.current?.value,
+      userEmail: userEmailref.current?.value,
+      review: reviewRef.current?.value,
+      stars,
+      adminId,
+      eventName
+    };
+
+    const response = await axios.post("/api/submit-review", data);
+    console.log(response.data);
+    if (response.data.type === "success") {
+      alert("review submitted successfully");
+      // signOut();
+    } else {
+      alert(response.data.message);
+    }
+  }
   return logged ? (
     <div className=" md:min-h-335 text-white flex flex-col items-center ">
       <div className="absolute z-100 pl-5 pt-10 flex mt-5 flex-col gap-6 w-90 h-147 md:w-140 md:h-187 bg-gray-950 rounded-3xl border border-white ">
@@ -117,7 +136,7 @@ export default function FIllform({ adminId, eventName }: props) {
                 ref={userNameref}
                 // value={userData.data.user?.name || ""}
                 placeholder="name "
-                className="bg-gray-400 text-sm text-black min-w-52 mx-2 md:min-w-70 rounded-md px-2 md:mx-4 border border-white "
+                className="bg-gray-400 text-sm md:text-lg text-black min-w-52 mx-2 md:min-w-70 rounded-md px-2 md:mx-4 border border-white "
               />
             </div>
             <div className="">
@@ -129,7 +148,7 @@ export default function FIllform({ adminId, eventName }: props) {
                 ref={userEmailref}
                 value={userData.data.user?.email || ""}
                 placeholder="email"
-                className="bg-gray-400 text-sm text-black rounded-md min-w-52 px-2 md:min-w-70 mx-2 md:mx-4 border border-white "
+                className="bg-gray-400 text-sm md:text-lg text-black rounded-md min-w-52 px-2 md:min-w-70 mx-2 md:mx-4 border border-white "
               />
             </div>
           </div>
@@ -157,7 +176,10 @@ export default function FIllform({ adminId, eventName }: props) {
           />
         </div>
         <div className="flex justify-center">
-          <button className="bg-white text-black px-2 py-1 rounded-lg hover:bg-white/60 transition-all duration-100">
+          <button
+            onClick={handleSubmit}
+            className="bg-white text-black px-2 py-1 rounded-lg hover:bg-white/60 transition-all duration-100"
+          >
             submit
           </button>
           <button
