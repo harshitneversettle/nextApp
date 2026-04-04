@@ -12,7 +12,8 @@ export async function POST(req: NextRequest) {
     select: {
       name: true,
       email: true,
-      reviews: { select: { review: true, stars: true } },
+      eventId : true ,
+      reviews: { select: { review: true, stars: true , id : true } },
     },
   });
   return NextResponse.json({
