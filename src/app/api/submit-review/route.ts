@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
           message: "review already exists",
           type: "error",
         },
-        { status: 404 },
+        { status: 409 },
       );
     }
   }
@@ -41,14 +41,13 @@ export async function POST(req: NextRequest) {
   const eventDetails = await db.events.findUnique({ where: { eventName } });
   if (eventDetails) {
     const eventId = Number(eventDetails.id);
-
-    const userDetails = await db.users.create({
-      data: {
-        name: userName,
-        email: userEmail,
-        eventId,
-      },
+    // const eventName = eventDetails.eventName ;
+    const userDetails = await db.users.upsert({
+      where: { email: userEmail },
+      update: {},
+      create: { name: userName, email: userEmail, eventId },
     });
+
     const userId = userDetails.id;
     await db.reviews.create({
       data: {
@@ -72,6 +71,6 @@ export async function POST(req: NextRequest) {
       message: "event not found ",
       type: "error",
     },
-    { status: 500 },
+    { status: 404 },
   );
 }

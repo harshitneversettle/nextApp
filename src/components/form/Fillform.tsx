@@ -68,6 +68,7 @@ export default function FIllform({ adminId, eventName }: props) {
       alert("review submitted successfully");
       // signOut();
     } else {
+      console.log(response.data);
       alert(response.data.message);
     }
   }
