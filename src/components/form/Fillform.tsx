@@ -3,8 +3,6 @@
 import Image from "next/image";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useSession, signIn, signOut } from "next-auth/react";
 
 interface props {
@@ -53,23 +51,39 @@ export default function FIllform({ adminId, eventName }: props) {
     );
 
   async function handleSubmit() {
-    const data = {
-      userName: userNameref.current?.value,
-      userEmail: userEmailref.current?.value,
-      review: reviewRef.current?.value,
-      stars,
-      adminId,
-      eventName
-    };
+    try {
+      const data = {
+        userName: userNameref.current?.value,
+        userEmail: userEmailref.current?.value,
+        review: reviewRef.current?.value,
+        stars,
+        adminId,
+        eventName,
+      };
 
-    const response = await axios.post("/api/submit-review", data);
-    console.log(response.data);
-    if (response.data.type === "success") {
-      alert("review submitted successfully");
-      // signOut();
-    } else {
+      const response = await axios.post("/api/submit-review", data);
       console.log(response.data);
-      alert(response.data.message);
+      if (response.data.type === "success") {
+        alert("review submitted successfully");
+        // signOut();
+      } else {
+        console.log(response.data);
+        alert(response.data.message);
+      }
+    } catch (error: any) {
+      if (error.status === 404) {
+        alert("event not found");
+        return;
+      } else if (error.status === 401) {
+        alert("please login to submit review");
+        signIn();
+        return;
+      } else if (error.status === 409) {
+        alert("you have already submitted a review for this event");
+        return;
+      } else if (error.status === 405) {
+        alert("all fields are required");
+      }
     }
   }
   return logged ? (
@@ -147,6 +161,7 @@ export default function FIllform({ adminId, eventName }: props) {
               <input
                 type="text"
                 ref={userEmailref}
+                required
                 value={userData.data.user?.email || ""}
                 placeholder="email"
                 className="bg-gray-400 text-sm md:text-lg text-black rounded-md min-w-52 px-2 md:min-w-70 mx-2 md:mx-4 border border-white "
@@ -159,6 +174,7 @@ export default function FIllform({ adminId, eventName }: props) {
           <textarea
             rows={2}
             ref={reviewRef}
+            required
             placeholder="write your review here ;) "
             className="bg-gray-400 text-black rounded-md px-2 md:max-w-125 border border-white "
           />
@@ -170,13 +186,15 @@ export default function FIllform({ adminId, eventName }: props) {
           <input
             min={0}
             onChange={(e) => setStars(Number(e.target.value))}
+            defaultValue={0}
+            required
             max={5}
             step={0.1}
             type="range"
             className="text-center mt-1 md:mt-3 accent-white md:px-2 rounded-md border  border-white "
           />
         </div>
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-4">
           <button
             onClick={handleSubmit}
             className="bg-white text-black px-2 py-1 rounded-lg hover:bg-white/60 transition-all duration-100"

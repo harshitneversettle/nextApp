@@ -50,7 +50,7 @@ export default function GetStarted() {
             <span className="tracking-widest">sharable link : </span>
             <span
               id="form-link"
-              className="text-blue-600 pl-2 hover:text-blue-600/60 transition-all"
+              className="text-sm md:text-lg text-blue-600 pl-2 hover:text-blue-600/60 transition-all"
             >
               {eventState.link}
             </span>
