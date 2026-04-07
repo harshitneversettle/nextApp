@@ -44,8 +44,8 @@ export default function AllReviews() {
       setEventId(response.data.data.allReviews[0]?.eventId);
       console.log(response.data.data.allReviews);
     }
-    getData();
-  }, []);
+    if (adminId && eventName) getData();
+  }, [searchParams]);
 
   const renderStars = (stars: number) => {
     const starElements = [];
@@ -69,7 +69,7 @@ export default function AllReviews() {
     reviewId: string;
   }) {
     console.log(data.reviewId);
-    router.push(`/embed/${data.reviewId}`);
+    router.push(`/review/${data.reviewId}`);
   }
 
   return (
@@ -121,7 +121,7 @@ export default function AllReviews() {
                         }}
                         className="bg-black hover:bg-black/80 tracking-widest text-white rounded-lg px-2 py-1 text-sm"
                       >
-                        generate SVG
+                        generate testimonal
                       </button>
                     </div>
                   </div>

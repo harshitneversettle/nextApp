@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { db } from "@/lib/db";
 import { refreshAccess } from "@/lib/refresh";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 async function verify(adminEmail: string) {
   const adminDetails = await db.admin.findUnique({
@@ -21,7 +21,7 @@ export async function auth(req: NextRequest) {
   let accessToken;
   let decoded;
   try {
-    accessToken = cookie.get("accessToken")?.value;
+    accessToken = req.cookies.get("accessToken")?.value;
 
     if (!accessToken) {
       return false;
@@ -59,13 +59,16 @@ export async function auth(req: NextRequest) {
         if (!result) {
           return false;
         }
-        cookie.set("accessToken", newAccess, {
+        const response = NextResponse.next();
+
+        response.cookies.set("accessToken", newAccess, {
           httpOnly: true,
           secure: true,
           maxAge: 60 * 30,
           sameSite: "strict",
         });
-        return true;
+
+        return response;
       } catch (error) {
         return false;
       }

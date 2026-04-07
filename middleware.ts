@@ -6,14 +6,14 @@ export async function middleware(req: NextRequest) {
 
   for (let i of allMiddlewares) {
     const result = await i(req);
-    if (!result) {
+    if (result === true || result === false || result === null) {
       return NextResponse.json(
-        {
-          message: "unauthorized",
-          type: "error",
-        },
+        { message: "unauthorized", type: "error" },
         { status: 401 },
       );
+    }
+    if (result instanceof NextResponse) {
+      return result;
     }
   }
   return NextResponse.next();
@@ -21,5 +21,5 @@ export async function middleware(req: NextRequest) {
 
 // boiler plate
 export const config = {
-  matcher: ["/api/event", "/api/event/[eventName]/route.ts"],
+  matcher: ["/api/event", "/api/event/:eventName"],
 };
