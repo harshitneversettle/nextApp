@@ -20,11 +20,16 @@ export function GetEvent({ setEventState }: params) {
   const router = useRouter();
   const [showAll, setShowAll] = useState<boolean>(false);
   const [allEvents, setAllEvents] = useState([]);
+  const [showReview, setShowReview] = useState(false);
+  const eventNameParamsRef = useRef<string | null>(null);
+  const adminIdParamsRef = useRef<string | null>(null);
   // const [success, setSuccess] = useState<boolean>(false);
 
   async function handleGet() {
     try {
       if (!eventNameRef.current) return;
+      if (!eventNameParamsRef) return;
+      if (!adminIdParamsRef) return;
       const eventName = eventNameRef.current.value;
       let response = await axios.get(`/api/get-event/${eventName}`);
 
@@ -37,8 +42,12 @@ export function GetEvent({ setEventState }: params) {
       }
 
       setGetData(response.data.data);
+      adminIdParamsRef.current = response.data.data.adminId;
+      eventNameParamsRef.current = response.data.data.eventName;
+
       const link = generateLink(response.data.data);
       setEventState({ success: true, link });
+      setShowReview(true);
       eventNameRef.current.value = "";
     } catch (error: any) {
       if (error.response?.status === 401) {
@@ -75,7 +84,7 @@ export function GetEvent({ setEventState }: params) {
     <div className="flex flex-col items-center gap-4">
       <div className="text-white text-4xl tracking-widest">Get Event</div>
       <div className="flex bg-black flex-col gap-5 border border-white/10 w-100 h-110 md:w-120 rounded-3xl">
-        <div className="h-6 border-b border-white/10 mt-3.5 ">
+        <div className="h-6 border-b border-white/10 mt-3.5  ">
           <div className="flex justify-between pr-3">
             <div className="flex gap-1.5 ml-2">
               <div className="h-2.5 w-2.5 rounded-full bg-red-700"></div>
@@ -83,12 +92,18 @@ export function GetEvent({ setEventState }: params) {
               <div className="h-2.5 w-2.5 rounded-full bg-green-400"></div>
             </div>
 
-            <button
-              onClick={() => handleAll()}
-              className="cursor-pointer text-sm text-white text-center"
-            >
-              Get all events
-            </button>
+            {showReview && (
+              <button
+                onClick={() =>
+                  router.push(
+                    `/all-reviews?adminId=${adminIdParamsRef.current}&eventName=${eventNameParamsRef.current}`,
+                  )
+                }
+                className="bg-white text-black px-1  rounded-xl tracking-widest hover:bg-white/60 transition-all"
+              >
+                see all reviews
+              </button>
+            )}
           </div>
         </div>
         <div className="flex justify-center gap-2 flex-col overflow-hidden">

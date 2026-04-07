@@ -32,8 +32,10 @@ export default function AllReviews() {
   const router = useRouter();
   const searchParams = useSearchParams();
   useEffect(() => {
-    setAdminId(searchParams.get("adminId"));
-    setEventName(searchParams.get("eventName"));
+    const paramsAdminId = searchParams.get("adminId");
+    const paramsEventName = searchParams.get("eventName");
+    setAdminId(paramsAdminId);
+    setEventName(paramsEventName);
     async function getData() {
       const response = await axios.post("/api/get-reviews", {
         adminId,
@@ -44,7 +46,7 @@ export default function AllReviews() {
       setEventId(response.data.data.allReviews[0]?.eventId);
       console.log(response.data.data.allReviews);
     }
-    if (adminId && eventName) getData();
+    if (paramsAdminId && paramsEventName) getData();
   }, [searchParams]);
 
   const renderStars = (stars: number) => {
