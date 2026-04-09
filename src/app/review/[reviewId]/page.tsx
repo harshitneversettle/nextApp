@@ -1,7 +1,8 @@
 "use client";
 
+import { colors } from "@/config/colors";
 import axios from "axios";
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { FaStar } from "react-icons/fa";
 
 export default function Review({
@@ -18,6 +19,10 @@ export default function Review({
       email: string;
     };
   } | null>(null);
+
+  const [bgColor, setBgColor] = useState<string | null>(null);
+  const bgColorRef = useRef<HTMLInputElement | null>(null);
+
   const reviewId = body.reviewId;
   useEffect(() => {
     const getData = async () => {
@@ -58,33 +63,69 @@ export default function Review({
   };
 
   return (
-    <div className="text-white w-full flex flex-col gap-4 justify-center items-center  h-screen bg-black">
-      <div className="border flex border-white/10 rounded-xl w-120 h-60 pr-3 gap-7">
-        <div className="flex items-center h-60 pl-5">
-          <div className="">{avtar(data?.user.name!)}</div>
+    <div className="flex flex-col bg-black h-screen">
+      <div className="text-white w-full flex flex-col gap-4 justify-center items-center ">
+        <div className="border flex border-white/10 rounded-xl w-120 h-60 pr-3 gap-7">
+          <div className="flex items-center h-60 pl-5">
+            <div className="">{avtar(data?.user.name!)}</div>
+          </div>
+          <div className="pt-10">
+            <div className="flex">
+              {renderStars(Math.floor(Number(data?.stars)))}
+            </div>
+            <div className=" pt-3 pb-3">
+              <div className="text-2xl">{data?.user.name}</div>
+              <div className="text-sm text-white/70">{data?.user.email}</div>
+            </div>
+            <div className="">{data?.review}</div>
+          </div>
         </div>
-        <div className="pt-10">
-          <div className="flex">
-            {renderStars(Math.floor(Number(data?.stars)))}
+        <button
+          onClick={() =>
+            navigator.clipboard.writeText(
+              `<iframe src="http://localhost:3000/embed/${reviewId}" width="500" height="250" frameborder="0"></iframe>`,
+            )
+          }
+          className="bg-white text-black px-2 py-1 hover:bg-white/70 tracking-widest rounded-lg transition-all"
+        >
+          copy iframe
+        </button>
+      </div>
+
+      <div className="">
+        <div className="text-white">Customize</div>
+        <div className="text-white">
+          <div className="flex flex-col">
+            <input ref={bgColorRef} type="text" placeholder="bg-color (hex)" />
+
+            <div className="bg-white w-fit text-black border rounded-xl px-2 py-1">
+              {Object.entries(colors).map(([colorName, shades]) => (
+                <div
+                  key={colorName}
+                  className="flex items-center gap-2 space-y-1"
+                >
+                  <span className="text-xs w-12 capitalize">{colorName}</span>
+                  {shades.map((shade) => (
+                    <span
+                      key={shade}
+                      onClick={() => {
+                        if (!bgColorRef.current) return;
+                        setBgColor(shade);
+                        bgColorRef.current.value = shade;
+                      }}
+                      className={`inline-block w-5 h-5 rounded-full border border-black/50 cursor-pointer ${shade}`}
+                      title={shade}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
-          <div className=" pt-3 pb-3">
-            <div className="text-2xl">{data?.user.name}</div>
-            <div className="text-sm text-white/70">{data?.user.email}</div>
-          </div>
-          <div className="">{data?.review}</div>
+          <input type="text" placeholder="text-color (hex)" />
+          <input type="text" placeholder="bg-color (hex)" />
+          <input type="text" placeholder="bg-color (hex)" />
         </div>
       </div>
-      <button
-        onClick={() =>
-          navigator.clipboard.writeText(
-            `<iframe src="http://localhost:3000/embed/${reviewId}" width="500" height="250" frameborder="0"></iframe>`,
-          )
-        }
-        className="bg-white text-black px-2 py-1 hover:bg-white/70 tracking-widest rounded-lg transition-all"
-      >
-        copy iframe
-      </button>
-      
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
+  // console.log("hii");
   const body = await req.json();
   const userName = body.userName;
   const userEmail = body.userEmail;
@@ -21,6 +22,8 @@ export async function POST(req: NextRequest) {
   }
 
   const isExist = await db.users.findUnique({ where: { email: userEmail } });
+  // console.log("aksndjschjsxhcb")
+  console.log(isExist);
   if (isExist) {
     const userId = isExist.id;
     const reviewExist = await db.reviews.findFirst({
