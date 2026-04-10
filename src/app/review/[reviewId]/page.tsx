@@ -22,6 +22,16 @@ export default function Review({
 
   const [bgColor, setBgColor] = useState<string | null>(null);
   const bgColorRef = useRef<HTMLInputElement | null>(null);
+  const [imageSize, setImageSize] = useState<number | null>(null);
+  const imageSizeRef = useRef<HTMLInputElement | null>(null);
+  const [nameSize, setNameSize] = useState<number | null>(null);
+  const nameSizeRef = useRef<HTMLInputElement | null>(null);
+  const [emailSize, setEmailSize] = useState<number | null>(null);
+  const emailSizeRef = useRef<HTMLInputElement | null>(null);
+  const [reviewSize, setReviewSize] = useState<number | null>(null);
+  const reviewSizeRef = useRef<HTMLInputElement | null>(null);
+
+  const [defaultStyle, setDefaultStyle] = useState<boolean>(true);
 
   const reviewId = body.reviewId;
   useEffect(() => {
@@ -42,7 +52,23 @@ export default function Review({
     const second = name.split(" ")[1]?.slice(0, 1) || null;
     const complete = first.concat(second || "");
     return (
-      <div className=" flex justify-center uppercase items-center w-30 h-30 text-black bg-white text-xl rounded-full font-semibold">
+      <div className="flex justify-center uppercase items-center w-30 h-30 text-black bg-white text-xl rounded-full font-semibold">
+        {complete}
+      </div>
+    );
+  };
+
+  const Customavtar = (name: string) => {
+    if (!imageSize) return;
+    if (!data) return;
+    const first = name.split(" ")[0]?.slice(0, 1);
+    const second = name.split(" ")[1]?.slice(0, 1) || null;
+    const complete = first.concat(second || "");
+    return (
+      <div
+        className={`flex justify-center uppercase items-center text-black bg-white text-xl rounded-full font-semibold`}
+        style={{ width: imageSize, height: imageSize }}
+      >
         {complete}
       </div>
     );
@@ -65,38 +91,72 @@ export default function Review({
   return (
     <div className="flex flex-col bg-black h-screen">
       <div className="text-white w-full flex flex-col gap-4 justify-center items-center ">
-        <div className="border flex border-white/10 rounded-xl w-120 h-60 pr-3 gap-7">
-          <div className="flex items-center h-60 pl-5">
-            <div className="">{avtar(data?.user.name!)}</div>
-          </div>
-          <div className="pt-10">
-            <div className="flex">
-              {renderStars(Math.floor(Number(data?.stars)))}
+        {defaultStyle ? (
+          <div className="border flex border-white/10 rounded-xl w-120 h-60 pr-3 gap-7">
+            <div className="flex items-center h-60 pl-5">
+              <div className="">{avtar(data?.user.name!)}</div>
             </div>
-            <div className=" pt-3 pb-3">
-              <div className="text-2xl">{data?.user.name}</div>
-              <div className="text-sm text-white/70">{data?.user.email}</div>
+            <div className="pt-10">
+              <div className="flex">
+                {renderStars(Math.floor(Number(data?.stars)))}
+              </div>
+              <div className=" pt-3 pb-3">
+                <div className="text-2xl">{data?.user.name}</div>
+                <div className="text-sm text-white/70">{data?.user.email}</div>
+              </div>
+              <div className="">{data?.review}</div>
             </div>
-            <div className="">{data?.review}</div>
           </div>
+        ) : (
+          <div className="border flex border-white/10 rounded-xl w-120 h-60 pr-3 gap-7">
+            <div className={`flex items-center h-60 pl-5`}>
+              <div className="">{Customavtar(data?.user.name!)}</div>
+            </div>
+            <div className="pt-10">
+              <div className="flex">
+                {renderStars(Math.floor(Number(data?.stars)))}
+              </div>
+              <div className=" pt-3 pb-3">
+                <div style={{ fontSize: nameSize! }}>{data?.user.name}</div>
+                <div className="text-white/70" style={{ fontSize: emailSize! }}>
+                  {data?.user.email}
+                </div>
+              </div>
+              <div style={{ fontSize: reviewSize! }}>{data?.review}</div>
+            </div>
+          </div>
+        )}
+        <div className="flex gap-3">
+          <button
+            onClick={() =>
+              navigator.clipboard.writeText(
+                `<iframe src="http://localhost:3000/embed/${reviewId}" width="500" height="250" frameborder="0"></iframe>`,
+              )
+            }
+            className="bg-white text-black px-2 py-1 hover:bg-white/70 tracking-widest rounded-lg transition-all"
+          >
+            copy iframe
+          </button>
+
+          <button
+            className="bg-white text-black px-2 py-1 hover:bg-white/70 tracking-widest rounded-lg transition-all"
+            onClick={() => setDefaultStyle((prev) => !prev)}
+          >
+            {defaultStyle ? "Default" : "customize"}
+          </button>
         </div>
-        <button
-          onClick={() =>
-            navigator.clipboard.writeText(
-              `<iframe src="http://localhost:3000/embed/${reviewId}" width="500" height="250" frameborder="0"></iframe>`,
-            )
-          }
-          className="bg-white text-black px-2 py-1 hover:bg-white/70 tracking-widest rounded-lg transition-all"
-        >
-          copy iframe
-        </button>
       </div>
 
       <div className="">
         <div className="text-white">Customize</div>
-        <div className="text-white">
+        <div className="text-white flex">
           <div className="flex flex-col">
-            <input ref={bgColorRef} type="text" placeholder="bg-color (hex)" />
+            <input
+              ref={bgColorRef}
+              type="text"
+              placeholder="bg-color (hex)"
+              className="border w-fit rounded-lg px-2 "
+            />
 
             <div className="bg-white w-fit text-black border rounded-xl px-2 py-1">
               {Object.entries(colors).map(([colorName, shades]) => (
@@ -121,9 +181,76 @@ export default function Review({
               ))}
             </div>
           </div>
-          <input type="text" placeholder="text-color (hex)" />
-          <input type="text" placeholder="bg-color (hex)" />
-          <input type="text" placeholder="bg-color (hex)" />
+          <div className="flex flex-col gap-8">
+            <div className="flex flex-col">
+              <input ref={nameSizeRef} type="text" placeholder="name text" />
+              <input
+                type="range"
+                onChange={(e) => {
+                  if (!nameSizeRef.current) return;
+                  setNameSize(Number(e.target.value));
+                  nameSizeRef.current!.value = e.target.value;
+                }}
+                defaultValue={0}
+                step={1}
+                max={55}
+                min={25}
+                className="text-white"
+              />
+            </div>
+            <div className="flex flex-col">
+              <input ref={emailSizeRef} type="text" placeholder="email text" />
+              <input
+                type="range"
+                onChange={(e) => {
+                  if (!emailSizeRef.current) return;
+                  setEmailSize(Number(e.target.value));
+                  emailSizeRef.current.value = e.target.value;
+                }}
+                defaultValue={0}
+                step={1}
+                max={25}
+                min={15}
+                className="text-white"
+              />
+            </div>
+            <div className="flex flex-col">
+              <input
+                ref={reviewSizeRef}
+                type="text"
+                placeholder="review text"
+              />
+              <input
+                type="range"
+                onChange={(e) => {
+                  if (!reviewSizeRef.current) return;
+                  setReviewSize(Number(e.target.value));
+                  reviewSizeRef.current.value = e.target.value;
+                }}
+                defaultValue={0}
+                step={1}
+                max={40}
+                className="text-white"
+              />
+            </div>
+            <div className="flex flex-col">
+              <input ref={imageSizeRef} type="text" placeholder="image size" />
+              <input
+                type="range"
+                onChange={(e) => {
+                  if (!imageSizeRef.current) return;
+                  let val = Number(e.target.value);
+                  setImageSize(val);
+                  imageSizeRef.current.value = e.target.value;
+                }}
+                defaultValue={0}
+                step={1}
+                max={200}
+                min={50}
+                className="text-white"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
