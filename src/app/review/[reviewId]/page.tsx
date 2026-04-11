@@ -94,10 +94,10 @@ export default function Review({
     return starElements;
   };
   return (
-    <div className="flex flex-col bg-black h-screen">
+    <div className="flex flex-col bg-black h-screen ">
       <div className="text-white w-full flex flex-col gap-4 justify-center items-center ">
         {defaultStyle ? (
-          <div className="border flex border-white/10 rounded-xl w-120 h-60 pr-3 gap-7">
+          <div className="border flex border-white/10 rounded-xl max-w-125 pr-3 gap-7 break-words">
             <div className="flex items-center h-60 pl-5">
               <div className="">{avtar(data?.user.name!)}</div>
             </div>
@@ -114,7 +114,7 @@ export default function Review({
           </div>
         ) : (
           <div
-            className={`border flex border-white/10 rounded-xl w-fit h-fit pr-5 gap-7 `}
+            className="border flex border-white/10 rounded-xl max-w-125 pr-3 gap-7 break-words"
             style={{
               backgroundColor: bgColor,
             }}

@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { db } from "@/lib/db";
 import bcrypt from "bcrypt";
-
-const db = new PrismaClient();
 
 async function main() {
   // Admin

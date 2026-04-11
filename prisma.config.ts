@@ -12,4 +12,8 @@ export default defineConfig({
       return new PrismaPg({ connectionString: process.env.DATABASE_URL! });
     },
   },
+  migrations: {
+    path: "prisma/migrations",
+    seed: "tsx prisma/seed.ts",
+  },
 });
