@@ -1,11 +1,9 @@
 "use client";
 
 import axios from "axios";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FaClosedCaptioning, FaCross, FaStar, FaTimes } from "react-icons/fa";
-import { LuCroissant, LuCross, LuCrosshair } from "react-icons/lu";
+import { FaStar } from "react-icons/fa";
 
 interface reviewData {
   name: string;
@@ -79,9 +77,9 @@ export default function AllReviews() {
 
   return (
     <div className="">
-      <div className={`w-full h-screen bg-gray-950 `}>
+      <div className={`w-full bg-gray-950 `}>
         <div className="flex justify-center items-center text-white">
-          <div className="w-300 p-5 h-300 border border-white">
+          <div className="w-300 p-5 border border-white">
             <div className="tracking-widest text-3xl">
               Event Name : {eventName}
             </div>
@@ -95,39 +93,48 @@ export default function AllReviews() {
               {data.length > 0 &&
                 data.map((i, idx) => {
                   return (
-                    <div className="flex justify-between bg-white text-black pl-3 pr-6 pt-2 rounded-2xl">
-                      <div className="">
+                    <div className="grid grid-cols-9 bg-white text-black pl-3 pr-6 pt-2 rounded-2xl">
+                      <div className="col-span-6">
                         <div className="font-semibold text-2xl pb-1 ">
                           Reviewer name : {i.name}
                         </div>
                         <div className="font-mono text-black/80">
                           email : {i.email}
                         </div>
-                        <div className="pt-5 text- pb-3">
+                        <div className="pt-5 text- pb-3 ">
                           {i.reviews[0]?.review}
                         </div>
-                        {/* <div className="">stars : {Number(i.reviews[0]?.stars)}</div> */}
                       </div>
-                      <div className="flex flex-col justify-between pb-2">
-                        <div className="flex gap-1">
+                      <div className="col-span-3 grid grid-rows-3 pb-2">
+                        <div className="row-span-2 flex gap-1 justify-end">
                           {renderStars(Number(i.reviews[0]?.stars))}
                         </div>
-                        <button
-                          onClick={() => {
-                            const data = {
-                              username: i.name,
-                              email: i.email,
-                              review: i.reviews[0]?.review,
-                              stars: i.reviews[0]?.stars,
-                              reviewId: i.reviews[0].id,
-                            };
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => {
+                              router.push(`/wall/${eventName}/${adminId}`);
+                            }}
+                            className="row-span-1 bg-black hover:bg-black/80 tracking-widest text-white rounded-lg px-2 py-1 text-sm"
+                          >
+                            wall of love
+                          </button>
+                          <button
+                            onClick={() => {
+                              const data = {
+                                username: i.name,
+                                email: i.email,
+                                review: i.reviews[0]?.review,
+                                stars: i.reviews[0]?.stars,
+                                reviewId: i.reviews[0].id,
+                              };
 
-                            handleSend(data);
-                          }}
-                          className="bg-black hover:bg-black/80 tracking-widest text-white rounded-lg px-2 py-1 text-sm"
-                        >
-                          generate testimonal
-                        </button>
+                              handleSend(data);
+                            }}
+                            className="row-span-1 bg-black hover:bg-black/80 tracking-widest text-white rounded-lg px-2 py-1 text-sm"
+                          >
+                            generate testimonal
+                          </button>
+                        </div>
                       </div>
                     </div>
                   );
