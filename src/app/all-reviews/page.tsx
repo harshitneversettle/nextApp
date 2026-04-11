@@ -38,17 +38,18 @@ export default function AllReviews() {
     const paramsEventName = searchParams.get("eventName");
     setAdminId(paramsAdminId);
     setEventName(paramsEventName);
+    console.log(paramsAdminId, paramsEventName);
     async function getData() {
       const response = await axios.post("/api/get-reviews", {
-        adminId,
-        eventName,
+        adminId: paramsAdminId,
+        eventName: paramsEventName,
       });
-
+      console.log(response.data);
       setdata(response.data.data.allReviews);
       setEventId(response.data.data.allReviews[0]?.eventId);
       console.log(response.data.data.allReviews);
     }
-    if (paramsAdminId && paramsEventName) getData();
+    getData();
   }, [searchParams]);
 
   const renderStars = (stars: number) => {

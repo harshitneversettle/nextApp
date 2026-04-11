@@ -57,23 +57,23 @@ export default function WallOfLove({ params }: { params: { slug: string[] } }) {
   const col2 = reviews.filter((_, index) => index % 3 === 1);
   const col3 = reviews.filter((_, index) => index % 3 === 2);
 
- const randColor = [
-   "bg-violet-500/20 text-violet-300",
-   "bg-rose-500/20 text-rose-300",
-   "bg-amber-500/20 text-amber-300",
-   "bg-teal-500/20 text-teal-300",
-   "bg-sky-500/20 text-sky-300",
-   "bg-pink-500/20 text-pink-300",
-   "bg-emerald-500/20 text-emerald-300",
-   "bg-orange-500/20 text-orange-300",
- ];
+  const randColor = [
+    "bg-violet-500 text-violet-300",
+    "bg-rose-500 text-rose-300",
+    "bg-amber-500 text-amber-300",
+    "bg-teal-500 text-teal-300",
+    "bg-sky-500 text-sky-300",
+    "bg-pink-500 text-pink-300",
+    "bg-emerald-500 text-emerald-300",
+    "bg-orange-500 text-orange-300",
+  ];
 
   function RenderCard({ review }: { review: reviewData }) {
     const rand = Math.floor(Math.random() * randColor.length);
     console.log(rand, randColor.length);
     const avatarColor = randColor[rand] || "bg-gray-500/50";
     return (
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 flex flex-col gap-3 hover:border-zinc-700 transition-all duration-200">
+      <div className="bg-white border border-zinc-800 rounded-2xl p-5 flex flex-col gap-3 hover:border-zinc-700 transition-all duration-200">
         <div className="flex gap-1">
           {Array.from({ length: 5 }).map((_, i) => (
             <FaStar
@@ -84,11 +84,11 @@ export default function WallOfLove({ params }: { params: { slug: string[] } }) {
           ))}
         </div>
 
-        <p className="text-sm text-zinc-400 leading-relaxed">
+        <p className="text-sm leading-relaxed">
           &ldquo;{review.reviews[0].review}&rdquo;
         </p>
 
-        <div className="border-t border-zinc-800" />
+        <div className="border-t border-zinc-800/20" />
 
         <div className="flex items-center gap-3">
           <div
@@ -97,8 +97,8 @@ export default function WallOfLove({ params }: { params: { slug: string[] } }) {
             {review.name.slice(0, 2)}
           </div>
           <div>
-            <p className="text-sm font-semibold text-zinc-100">{review.name}</p>
-            <p className="text-xs text-zinc-600">{review.email}</p>
+            <p className="text-sm font-semibold">{review.name}</p>
+            <p className="text-xs ">{review.email}</p>
           </div>
         </div>
       </div>
@@ -106,14 +106,17 @@ export default function WallOfLove({ params }: { params: { slug: string[] } }) {
   }
 
   return (
-    <div className="bg-[#0b0b0b] min-h-screen ">
+    <div className="bg-black min-h-screen ">
       <div className=" flex flex-col mx-auto max-w-6xl">
         <div className="text-left">
           <div className="inline-flex items-center gap-2 rounded-full py-1 text-xs mb-3 text-white/50">
             <span className="text-yellow-400">
               <FaStar />
             </span>
-            avg-rating = {rating} of {reviews.length} reviews
+            avg-rating = {rating}
+            <span className="text-xs bg-zinc-800 text-zinc-400 px-3 py-1 rounded-full">
+              {reviews.length} reviews
+            </span>
           </div>
           <div className="text-5xl font-bold text-white tracking-tight mb-3">
             Wall of love
