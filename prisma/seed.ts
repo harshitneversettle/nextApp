@@ -2,124 +2,23 @@ import { db } from "@/lib/db";
 import bcrypt from "bcrypt";
 
 async function main() {
-  // Admin
+  await db.reviews.deleteMany();
+  await db.users.deleteMany();
+  await db.events.deleteMany();
+  await db.admin.deleteMany();
+
   const admin = await db.admin.create({
     data: {
-      name: "Harshit Sharma",
+      name: "Harshit Yadav",
       email: "harshit@gmail.com",
       password: await bcrypt.hash("123456", 10),
       events: {
         create: {
-          eventName: "TechConf2024",
+          eventName: "okok",
           eventDesc: "Annual technology conference for developers",
           message: "Thank you for attending! Please share your experience.",
           users: {
             create: [
-              {
-                name: "Rahul Verma",
-                email: "rahul@gmail.com",
-                reviews: {
-                  create: {
-                    eventName: "TechConf2024",
-                    review:
-                      "Absolutely mind-blowing sessions. The speakers were world class and the networking opportunities were incredible. Will definitely attend next year!",
-                    stars: 5,
-                  },
-                },
-              },
-              {
-                name: "Priya Singh",
-                email: "priya@gmail.com",
-                reviews: {
-                  create: {
-                    eventName: "TechConf2024",
-                    review: "Great event overall. Loved the workshops.",
-                    stars: 4,
-                  },
-                },
-              },
-              {
-                name: "Aman Gupta",
-                email: "aman@gmail.com",
-                reviews: {
-                  create: {
-                    eventName: "TechConf2024",
-                    review:
-                      "The Next.js and AI talks were phenomenal. Learned so much in just two days. Venue was top notch and food was great too.",
-                    stars: 5,
-                  },
-                },
-              },
-              {
-                name: "Sneha Patel",
-                email: "sneha@gmail.com",
-                reviews: {
-                  create: {
-                    eventName: "TechConf2024",
-                    review:
-                      "Good but could have been better. Some sessions felt rushed.",
-                    stars: 3,
-                  },
-                },
-              },
-              {
-                name: "Vikram Joshi",
-                email: "vikram@gmail.com",
-                reviews: {
-                  create: {
-                    eventName: "TechConf2024",
-                    review:
-                      "Best conference I have attended in years. The hands-on labs were amazing.",
-                    stars: 5,
-                  },
-                },
-              },
-              {
-                name: "Ananya Roy",
-                email: "ananya@gmail.com",
-                reviews: {
-                  create: {
-                    eventName: "TechConf2024",
-                    review: "Loved it!",
-                    stars: 4,
-                  },
-                },
-              },
-              {
-                name: "Karan Mehta",
-                email: "karan@gmail.com",
-                reviews: {
-                  create: {
-                    eventName: "TechConf2024",
-                    review:
-                      "The Docker and Kubernetes workshop alone was worth the ticket price. Incredibly well organized with clear takeaways for each session.",
-                    stars: 5,
-                  },
-                },
-              },
-              {
-                name: "Divya Nair",
-                email: "divya@gmail.com",
-                reviews: {
-                  create: {
-                    eventName: "TechConf2024",
-                    review: "Decent event. Expected more from the keynote.",
-                    stars: 3,
-                  },
-                },
-              },
-              {
-                name: "Rohan Das",
-                email: "rohan@gmail.com",
-                reviews: {
-                  create: {
-                    eventName: "TechConf2024",
-                    review:
-                      "Met so many brilliant people. The community here is genuinely supportive and inspiring.",
-                    stars: 5,
-                  },
-                },
-              },
               {
                 name: "Rahul Verma",
                 email: "rahul@gmail.com",
@@ -173,7 +72,8 @@ async function main() {
                 reviews: {
                   create: {
                     eventName: "TechConf2024",
-                    review: "Best conference I have attended in years.",
+                    review:
+                      "Best conference I have attended in years. The hands-on labs were amazing.",
                     stars: 5,
                   },
                 },
@@ -418,10 +318,11 @@ async function main() {
       },
     },
   });
-
-  console.log("Seeded admin:", admin.email);
 }
 
 main()
-  .catch(console.error)
+  .catch((e) => {
+    console.error("Seed failed:", e);
+    process.exit(1);
+  })
   .finally(() => db.$disconnect());
